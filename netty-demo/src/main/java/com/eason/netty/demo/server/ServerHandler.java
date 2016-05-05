@@ -20,7 +20,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<String> {
         String md5 = source + "md5";
         //解析成JSON
         json.put("md5Hex", md5);
-        ctx.writeAndFlush(json.toString());//write bytes to socket,and flush(clear) the buffer cache.
+        ctx.writeAndFlush(JsonUtils.toString(json));//write bytes to socket,and flush(clear) the buffer cache.
     }
 
     @Override
