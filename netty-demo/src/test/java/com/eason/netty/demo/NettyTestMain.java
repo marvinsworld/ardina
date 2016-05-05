@@ -13,16 +13,16 @@ public class NettyTestMain {
         NettyClient nettyClient = new NettyClient();
         nettyClient.start();
 
-        try {
-            for (int i = 0; i < 5; i++) {
-                String response = nettyClient.send("111111111111");
-                System.out.println("response:" + response);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            nettyClient.close();
-        }
+//        try {
+//            for (int i = 0; i < 5; i++) {
+//                String response = nettyClient.send("111111111111");
+//                System.out.println("response:" + response);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        } finally {
+//            nettyClient.close();
+//        }
 
         nettyServer.close();
 
