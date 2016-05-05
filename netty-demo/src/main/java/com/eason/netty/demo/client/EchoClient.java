@@ -3,6 +3,7 @@ package com.eason.netty.demo.client;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
@@ -12,6 +13,8 @@ import java.net.InetSocketAddress;
 
 public class EchoClient {
 
+    private Bootstrap bootstrap;
+    private ChannelFuture future;
     private final String host;
     private final int port;
 
@@ -21,36 +24,62 @@ public class EchoClient {
     }
 
     public void start() throws Exception {
-        EventLoopGroup group = new NioEventLoopGroup();
+        EventLoopGroup workerGroup = new NioEventLoopGroup(2);//1 is OK
         try {
-            Bootstrap b = new Bootstrap();                //1
-            b.group(group)                                //2
-                    .channel(NioSocketChannel.class)            //3
-                    .remoteAddress(new InetSocketAddress(host, port))    //4
-                    .handler(new ChannelInitializer<SocketChannel>() {    //5
+            bootstrap = new Bootstrap();
+            bootstrap.group(workerGroup)
+                    .channel(NioSocketChannel.class) //create SocketChannel transport
+                    .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000)
+                    .handler(new ChannelInitializer<SocketChannel>() {
                         @Override
-                        public void initChannel(SocketChannel ch) throws Exception {
-                            ch.pipeline().addLast(new EchoClientHandler());
+                        protected void initChannel(SocketChannel ch) throws Exception {
+                            ch.pipeline()
+                                    .addLast(new EchoClientHandler());//the same as ServerBootstrap
                         }
                     });
-
-            ChannelFuture f = b.connect().sync();        //6
-
-            f.channel().closeFuture().sync();            //7
+            //keep the connection with server，and blocking until closed!
+            future = bootstrap.connect(new InetSocketAddress("127.0.0.1", 18080)).sync();
+            //init = true;
         } finally {
-            group.shutdownGracefully().sync();            //8
+            System.out.println("client finally");
+            //workerGroup.shutdownGracefully();
+
         }
+
+
+//        EventLoopGroup group = new NioEventLoopGroup(2);
+//        try {
+//            Bootstrap b = new Bootstrap();
+//            b.group(group);
+//            b.channel(NioSocketChannel.class);
+//            //b.remoteAddress(new InetSocketAddress(host, port));
+//            b.handler(new ChannelInitializer<SocketChannel>() {
+//
+//                public void initChannel(SocketChannel ch) throws Exception {
+//                    ch.pipeline().addLast(new EchoClientHandler());
+//                }
+//            });
+//            ChannelFuture f = b.connect(new InetSocketAddress(host, port)).sync();
+////            f.addListener(new ChannelFutureListener() {
+////
+////                public void operationComplete(ChannelFuture future) throws Exception {
+////                    if (future.isSuccess()) {
+////                        System.out.println("client connected");
+////                    } else {
+////                        System.out.println("server attemp failed");
+////                        future.cause().printStackTrace();
+////                    }
+////
+////                }
+////            });
+////            f.channel().closeFuture().sync();
+//        } finally {
+//            group.shutdownGracefully().sync();
+//        }
     }
 
     public static void main(String[] args) throws Exception {
-//        if (args.length != 2) {
-//            System.err.println("Usage: " + EchoClient.class.getSimpleName() + " <host> <port>");
-//            return;
-//        }
 
-        final String host = "127.0.0.1";//args[0];
-        final int port = 1111;//Integer.parseInt(args[1]);
-
-        new EchoClient(host, port).start();
+        new EchoClient("127.0.0.1", 8080).start();
     }
 }
