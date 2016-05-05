@@ -1,7 +1,7 @@
 package com.eason.netty.demo;
 
-import com.eason.netty.demo.client.EchoClient;
-import com.eason.netty.demo.server.EchoServer;
+import com.eason.netty.demo.echo.EchoClient;
+import com.eason.netty.demo.echo.EchoServer;
 
 
 public class ClientTest {

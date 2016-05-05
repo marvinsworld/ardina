@@ -1,5 +1,6 @@
-package com.eason.netty.demo.server;
+package com.eason.netty.demo.echo;
 
+import com.eason.netty.demo.client.ServerHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;

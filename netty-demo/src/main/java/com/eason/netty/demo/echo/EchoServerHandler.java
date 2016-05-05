@@ -1,4 +1,4 @@
-package com.eason.netty.demo.server;
+package com.eason.netty.demo.echo;
 
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;

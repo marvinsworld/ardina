@@ -1,7 +1,7 @@
 package com.eason.netty.demo;
 
 import com.eason.netty.demo.client.NettyClient;
-import com.eason.netty.demo.server.NettyServer;
+import com.eason.netty.demo.client.NettyServer;
 
 public class NettyTestMain {
 

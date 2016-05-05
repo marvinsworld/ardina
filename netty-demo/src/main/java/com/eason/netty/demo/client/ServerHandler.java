@@ -1,4 +1,4 @@
-package com.eason.netty.demo.server;
+package com.eason.netty.demo.client;
 
 import com.eason.common.JsonUtils;
 import io.netty.channel.ChannelHandlerContext;

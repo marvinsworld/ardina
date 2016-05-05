@@ -1,4 +1,4 @@
-package com.eason.netty.demo.server;
+package com.eason.netty.demo.client;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;

@@ -1,4 +1,4 @@
-package com.eason.netty.demo.client;
+package com.eason.netty.demo.echo;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
