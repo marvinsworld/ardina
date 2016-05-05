@@ -27,9 +27,11 @@ public class NettyServer {
 
     private ServerBootstrap bootstrap;
 
+    private ServerHandler serverHandler = new ServerHandler();
+
     public void start() {
 
-        if(init) {
+        if (init) {
             throw new RuntimeException("Client is already started!");
         }
         //thread model：one selector thread，and one worker thread pool。
@@ -37,7 +39,7 @@ public class NettyServer {
         EventLoopGroup workerGroup = new NioEventLoopGroup(Runtime.getRuntime().availableProcessors() - 1);
         try {
             bootstrap = new ServerBootstrap();//create ServerSocket transport。
-            bootstrap.group(bossGroup,workerGroup)
+            bootstrap.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
@@ -46,7 +48,7 @@ public class NettyServer {
                                     .addLast(new StringDecoder(UTF_8))
                                     .addLast(new LengthFieldPrepender(2))
                                     .addLast(new StringEncoder(UTF_8))
-                                    .addLast(new ServerHandler());
+                                    .addLast(serverHandler);
                         }
                     }).childOption(ChannelOption.TCP_NODELAY, true);
             future = bootstrap.bind(18080).sync();
@@ -56,7 +58,7 @@ public class NettyServer {
         } catch (Exception e) {
             isClosed = true;
         } finally {
-            if(isClosed) {
+            if (isClosed) {
                 workerGroup.shutdownGracefully();
                 bossGroup.shutdownGracefully();
                 System.out.println("server closed");
@@ -66,7 +68,7 @@ public class NettyServer {
 
 
     public void close() {
-        if(isClosed) {
+        if (isClosed) {
             return;
         }
         try {
@@ -77,6 +79,11 @@ public class NettyServer {
         }
         isClosed = true;
         System.out.println("server closed");
+    }
+
+    public void push(String msg) {
+        //future.channel().writeAndFlush(msg);
+        serverHandler.call(msg);
     }
 
 }
